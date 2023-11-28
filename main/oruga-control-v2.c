@@ -33,6 +33,8 @@ void ledc_motor_timer_init(ledc_timer_t timer) {
     ledc_timer_config(&ledc_timer);
 }
 
+// ------------------------- START MOTOR PART -------------------------------
+
 // Function to initialize a motor
 void motor_init(Motor* motor, ledc_channel_t channel, int mina_pin, int minb_pin, int pwm_pin, ledc_timer_t timer) {
     motor->channel = channel;
@@ -80,6 +82,10 @@ void motor_stop(Motor* motor) {
     gpio_set_level(motor->minb_pin, 0);
 }
 
+// ------------------------- END MOTOR PART -------------------------------
+
+// ------------------------- START ORUGA PART -------------------------------
+
 // Oruga initialization function
 void oruga_init(Oruga* oruga, int left_mina, int left_minb, int left_pwm, int right_mina, int right_minb, int right_pwm) {
     
@@ -87,10 +93,48 @@ void oruga_init(Oruga* oruga, int left_mina, int left_minb, int left_pwm, int ri
     motor_init(&oruga->right_motor, LEDC_CHANNEL_1, right_mina, right_minb, right_pwm, LEDC_TIMER_1);
 }
 
+// Move forward function
+void move_forward(Oruga* oruga, int speed) {
+    motor_start(&oruga->left_motor, speed);
+    motor_start(&oruga->right_motor, speed);
+    vTaskDelay(5000 / portTICK_PERIOD_MS);
+    motor_stop(&oruga->left_motor);
+    motor_stop(&oruga->right_motor);
+}
+
+// Move backward function
+void move_backward(Oruga* oruga, int speed) {
+    motor_start(&oruga->left_motor, -speed);
+    motor_start(&oruga->right_motor, -speed);
+    vTaskDelay(5000 / portTICK_PERIOD_MS);
+    motor_stop(&oruga->left_motor);
+    motor_stop(&oruga->right_motor);
+}
+
+// Turn right function
+void turn_right(Oruga* oruga, int speed) {
+    motor_start(&oruga->left_motor, speed);
+    motor_start(&oruga->right_motor, -speed);
+    vTaskDelay(5000 / portTICK_PERIOD_MS);
+    motor_stop(&oruga->left_motor);
+    motor_stop(&oruga->right_motor);
+}
+
+// Turn left function
+void turn_left(Oruga* oruga, int speed) {
+    motor_start(&oruga->left_motor, -speed);
+    motor_start(&oruga->right_motor, speed);
+    vTaskDelay(5000 / portTICK_PERIOD_MS);
+    motor_stop(&oruga->left_motor);
+    motor_stop(&oruga->right_motor);
+}
+
+// ------------------------- END ORUGA PART ------------------------------- 
+
 void app_main() {
     // GPIOS
-    int left_mina = 27;
-    int left_minb = 12;
+    int left_mina = 26;
+    int left_minb = 27;
     int left_pwm = 13;
     int right_mina = 17;
     int right_minb = 16;
@@ -102,11 +146,12 @@ void app_main() {
     // Corrected calls to init, start, and stop functions
     oruga_init(&my_oruga, left_mina, left_minb, left_pwm, right_mina, right_minb, right_pwm);
 
-    // Start the motors
-    motor_start(&my_oruga.left_motor, 2048);
-    motor_start(&my_oruga.right_motor, -2048);
-
-    vTaskDelay(5000 / portTICK_PERIOD_MS);
+    // Testing part
+    int vel = 2048; // 0 - 4096
+    move_forward(&my_oruga, vel);
+    move_backward(&my_oruga, vel);
+    turn_right(&my_oruga, vel);
+    turn_left(&my_oruga, vel);
 
     // Stop the motors
     motor_stop(&my_oruga.left_motor);
