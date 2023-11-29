@@ -32,5 +32,6 @@ void move_forward(Oruga* oruga, int speed);
 void move_backward(Oruga* oruga, int speed);
 void turn_right(Oruga* oruga, int speed);
 void turn_left(Oruga* oruga, int speed);
+void stop_oruga(Oruga* oruga);
 
 #endif // MOTOR_DRIVER_H

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interface de Control</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: LightCyan;
+        }
+        .container {
+            margin-top: 50px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+        }
+        .grid-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .button {
+            padding: 10px 10px;
+            margin: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        .container #mf {
+            grid-column: 2 / 3;
+            grid-row: 1 / 2;
+        }
+        .container #mb {
+            grid-column: 2 / 3;
+            grid-row: 5 / 6;
+        }
+        .container #tl {
+            grid-column: 1 / 2;
+            grid-row: 3 / 4;
+        }
+        .container #tr {
+            grid-column: 3 / 4;
+            grid-row: 3 / 4;
+        }
+        .button:hover {
+            background-color: green;
+        }
+        
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Controlando la Oruga</h1>
+    </header>
+
+    <main>
+        <section class="container">
+            <div class="grid-item" id="mf">
+                <button class="button" id="moveForward">Move Forward</button>
+            </div>
+            <div class="grid-item" id="mb">
+                <button class="button" id="moveBackward">Move Backward</button>
+            </div>
+            <div class="grid-item" id="tl">
+                <button class="button" id="turnLeft">Turn Left</button>
+            </div>
+            <div class="grid-item" id="tr">
+                <button class="button"  id="turnRight">Turn Right</button>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+
+    </footer>
+
+    <script>
+        const sendCommand = (command) => {
+            fetch(`/api?cmd=${command}`, { method: 'GET' })
+            .then(() => {
+                console.log(`Command sent: ${command}`);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    
+        const startCommand = (command) => sendCommand(command);
+        const stopCommand = () => sendCommand("Stop");
+    
+        // Adding event listeners for mouse and touch events
+        const addButtonListeners = (buttonId, command) => {
+            const button = document.getElementById(buttonId);
+            button.addEventListener("mousedown", () => startCommand(command));
+            button.addEventListener("mouseup", stopCommand);
+            button.addEventListener("mouseleave", stopCommand); // in case the mouse leaves the button area before releasing
+            button.addEventListener("touchstart", (e) => {
+                e.preventDefault(); // Prevents additional mouse event
+                startCommand(command);
+            });
+            button.addEventListener("touchend", stopCommand);
+        };
+    
+        // Apply listeners to each button
+        addButtonListeners("moveForward", "MoveForward");
+        addButtonListeners("moveBackward", "MoveBackward");
+        addButtonListeners("turnLeft", "TurnLeft");
+        addButtonListeners("turnRight", "TurnRight");
+    </script>
+</body>
+</html>

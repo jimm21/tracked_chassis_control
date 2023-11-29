@@ -76,34 +76,27 @@ void oruga_init(Oruga* oruga, int left_mina, int left_minb, int left_pwm, int ri
 void move_forward(Oruga* oruga, int speed) {
     motor_start(&oruga->left_motor, speed);
     motor_start(&oruga->right_motor, speed);
-    vTaskDelay(5000 / portTICK_PERIOD_MS);
-    motor_stop(&oruga->left_motor);
-    motor_stop(&oruga->right_motor);
 }
 
 // Move backward function
 void move_backward(Oruga* oruga, int speed) {
     motor_start(&oruga->left_motor, -speed);
     motor_start(&oruga->right_motor, -speed);
-    vTaskDelay(5000 / portTICK_PERIOD_MS);
-    motor_stop(&oruga->left_motor);
-    motor_stop(&oruga->right_motor);
 }
 
 // Turn right function
 void turn_right(Oruga* oruga, int speed) {
     motor_start(&oruga->left_motor, speed);
     motor_start(&oruga->right_motor, -speed);
-    vTaskDelay(5000 / portTICK_PERIOD_MS);
-    motor_stop(&oruga->left_motor);
-    motor_stop(&oruga->right_motor);
 }
 
 // Turn left function
 void turn_left(Oruga* oruga, int speed) {
     motor_start(&oruga->left_motor, -speed);
     motor_start(&oruga->right_motor, speed);
-    vTaskDelay(5000 / portTICK_PERIOD_MS);
+}
+
+void stop_oruga(Oruga* oruga) {
     motor_stop(&oruga->left_motor);
     motor_stop(&oruga->right_motor);
 }
